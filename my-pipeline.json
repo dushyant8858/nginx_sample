@@ -1,0 +1,102 @@
+{
+    "pipeline": {
+        "name": "nginx_sample",
+        "roleArn": "arn:aws:iam::821438830100:role/service-role/AWSCodePipelineServiceRole-us-east-1-dustin",
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-us-east-1-872010642574"
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "BranchName": "master",
+                            "PollForSourceChanges": "false",
+                            "RepositoryName": "nginx_sample"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": [],
+                        "region": "us-east-1",
+                        "namespace": "SourceVariables"
+                    },
+                    {
+                        "name": "ECR",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "ECR",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "RepositoryName": "nginx_sample"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "MyImage"
+                            }
+                        ],
+                        "inputArtifacts": [],
+                        "region": "us-east-1"
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "Deploy",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CodeDeployToECS",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "AppSpecTemplateArtifact": "SourceArtifact",
+                            "AppSpecTemplatePath": "appspec.yaml",
+                            "ApplicationName": "nginx_sample",
+                            "DeploymentGroupName": "nginx_sample",
+                            "Image1ArtifactName": "MyImage",
+                            "Image1ContainerName": "IMAGE1_NAME",
+                            "TaskDefinitionTemplateArtifact": "SourceArtifact",
+                            "TaskDefinitionTemplatePath": "taskdef.json"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            },
+                            {
+                                "name": "MyImage"
+                            }
+                        ],
+                        "region": "us-east-1",
+                        "namespace": "DeployVariables"
+                    }
+                ]
+            }
+        ],
+        "version": 4
+    },
+    "metadata": {
+        "pipelineArn": "arn:aws:codepipeline:us-east-1:821438830100:nginx_sample",
+        "created": 1578443378.079,
+        "updated": 1578446293.374
+    }
+}

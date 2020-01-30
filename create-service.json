@@ -1,0 +1,32 @@
+{
+    "taskDefinition": "nginx_sample:1",
+    "cluster": "nginx-sample",
+    "loadBalancers": [
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:821438830100:targetgroup/nginx-sample-1/c0a2296928988ace",
+            "containerName": "nginx_sample",
+            "containerPort": 80
+        }
+    ],
+    "desiredCount": 1,
+    "launchType": "EC2",
+    "schedulingStrategy": "REPLICA",
+    "deploymentController": {
+        "type": "CODE_DEPLOY"
+    },
+    "networkConfiguration": {
+        "awsvpcConfiguration": {
+            "subnets": [
+                "subnet-16e7a24a",
+                "subnet-1e87ff79",
+                "subnet-8feea9a1",
+                "subnet-0ba2aa41",
+                "subnet-a5ed629b",
+                "subnet-aca496a3"
+            ],
+            "securityGroups": [
+                "sg-0a9e3f1f5272ce0a3"
+            ]
+        }
+    }
+}
